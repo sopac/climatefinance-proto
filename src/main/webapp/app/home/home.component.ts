@@ -1,11 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { JhiEventManager } from 'ng-jhipster';
-import {NgxChartsModule} from '@swimlane/ngx-charts';
+import { NgxChartsModule } from '@swimlane/ngx-charts';
+
+
 import { Account, LoginModalService, Principal } from '../shared';
 import {HomeService} from "./home.service";
 import {CountryCount} from "./countrycount";
 import {SectorCount} from "./sectorcount";
+
+import {Router} from "@angular/router";
 
 
 @Component({
@@ -23,6 +27,7 @@ export class HomeComponent implements OnInit {
     countryCounts: CountryCount[];
     sectorCount: SectorCount[];
 
+
     //pie
     view: any[] = [800, 500];
     showLegend = true;
@@ -38,7 +43,9 @@ export class HomeComponent implements OnInit {
         private principal: Principal,
         private loginModalService: LoginModalService,
         private eventManager: JhiEventManager,
-        private homeService: HomeService
+        private homeService: HomeService,
+        private router: Router
+
     ) {
     }
 
@@ -50,6 +57,15 @@ export class HomeComponent implements OnInit {
         this.getCount();
         this.getCountryCount();
         this.getSectorCount();
+
+
+    }
+
+    onSelect(data) {
+        //alert(data.name);
+
+        this.router.navigateByUrl("/project;search=sector.name:" + data.name)
+
 
     }
 
