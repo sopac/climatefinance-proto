@@ -4,7 +4,7 @@ import { ProfileInfo } from './profile-info.model';
 
 @Component({
     selector: 'jhi-page-ribbon',
-    template: `<div class="ribbon" *ngIf="ribbonEnv"><a href="">{{ribbonEnv}}</a></div>`,
+    template: `<div class="ribbon" *ngIf="ribbonEnv"><a href="">In Development</a></div>`,
     styleUrls: [
         'page-ribbon.css'
     ]
