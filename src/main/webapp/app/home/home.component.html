@@ -15,12 +15,9 @@
         <div [ngSwitch]="isAuthenticated()">
             <div *ngSwitchCase="true">
 
-                <span *ngIf="account" class="alert alert-success">You are logged in as user <b>{{account.firstName}} {{account.lastName}}</b>.</span>
+                <span *ngIf="account" class="alert alert-success">You are logged in as <b>{{account.firstName}} {{account.lastName}}</b>.</span>
                 <a href="#/project" class="btn btn-primary">Browse Projects</a>
                 <br/><br/>
-
-
-
 
 
                 <table class="table">
@@ -30,7 +27,8 @@
                     </tr>
 
                     <tr *ngFor="let cc of countryCounts">
-                        <td><a style="color: #2b6ea1; font-weight: lighter;" href="#/project;search=country.name:{{cc.country}}">{{cc.country}}</a></td>
+                        <td><a style="color: #2b6ea1; font-weight: lighter;"
+                               href="#/project;search=country.name:{{cc.country}}">{{cc.country}}</a></td>
                         <td>{{cc.count}}</td>
                     </tr>
 
@@ -45,7 +43,7 @@
                 <p style="margin-left: 50px; font-weight: bold;">Projects Per Sector</p>
 
                 <ngx-charts-pie-chart
-                    [view]="view"
+                    [view]="viewPie"
                     [scheme]="colorScheme"
                     [results]="sectorCount"
                     [legend]="showLegend"
@@ -53,10 +51,32 @@
                     [labels]="showLabels"
                     [doughnut]="doughnut"
                     [gradient]="gradient"
-                    (select)="onSelect($event);">
+                    (select)="onSelectSector($event);">
                 </ngx-charts-pie-chart>
 
 
+                <br/><br/><br/><br/><br/><br/><br/>
+
+
+                <div style="margin-left: -300px;">
+
+                    <p style="margin-left: 200px; font-weight: bold;">Projects Per Principal Source</p>
+
+                    <ngx-charts-bar-horizontal
+                        [view]="viewBar"
+                        [scheme]="colorScheme"
+                        [results]="sourceCount"
+                        [gradient]="gradient"
+                        [xAxis]="showXAxis"
+                        [yAxis]="showYAxis"
+                        [legend]="showLegend"
+                        [showXAxisLabel]="showXAxisLabel"
+                        [showYAxisLabel]="showYAxisLabel"
+                        [xAxisLabel]="xAxisLabel"
+                        [yAxisLabel]="yAxisLabel"
+                        (select)="onSelectSource($event)">
+                    </ngx-charts-bar-horizontal>
+                </div>
 
 
             </div>

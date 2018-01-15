@@ -9,6 +9,7 @@ import {ResponseWrapper, createRequestOption} from '../shared';
 import {Project} from "../entities/project/project.model";
 import {CountryCount} from "./countrycount";
 import {SectorCount} from "./sectorcount";
+import {GenericCount} from "./genericcount";
 
 @Injectable()
 export class HomeService {
@@ -36,6 +37,13 @@ export class HomeService {
         return this.http.get(this.restUrl + '/sectorcount')
             .toPromise()
             .then(response => response.json() as SectorCount[])
+            .catch(this.handleError);
+    }
+
+    getSourceCount(): Promise<GenericCount[]> {
+        return this.http.get(this.restUrl + '/sourcecount')
+            .toPromise()
+            .then(response => response.json() as GenericCount[])
             .catch(this.handleError);
     }
 

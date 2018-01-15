@@ -65,6 +65,78 @@ public class CustomResource {
     }
 
 
+    @GetMapping("/sourcecount")
+    public String sourceCount() {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            ArrayList<GenericCount> list = new ArrayList<>();
+
+            Set<String> genericSet = new HashSet();
+            for (Project p : projectRepository.findAll()) {
+                genericSet.add(p.getPrincipalSource());
+            }
+
+            Map<String, Integer> m = new HashMap<>();
+            for (String c : genericSet) {
+                m.put(c, 0);
+            }
+
+            for (Project p : projectRepository.findAll()) {
+                String c = p.getPrincipalSource();
+                m.compute(c, (k, v) -> v + 1);
+            }
+
+            for (String generic : m.keySet()) {
+                GenericCount gc = new GenericCount();
+                gc.name = generic;
+                gc.value = m.get(generic);
+                if (generic != null)
+                    list.add(gc);
+            }
+            return mapper.writeValueAsString(list);
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return "null";
+    }
+
+
+    @GetMapping("/typecount")
+    public String typeCount() {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            ArrayList<GenericCount> list = new ArrayList<>();
+
+            Set<String> genericSet = new HashSet();
+            for (Project p : projectRepository.findAll()) {
+                genericSet.add(p.getProjectType().name());
+            }
+
+            Map<String, Integer> m = new HashMap<>();
+            for (String c : genericSet) {
+                m.put(c, 0);
+            }
+
+            for (Project p : projectRepository.findAll()) {
+                String c = p.getProjectType().name();
+                m.compute(c, (k, v) -> v + 1);
+            }
+
+            for (String generic : m.keySet()) {
+                GenericCount gc = new GenericCount();
+                gc.name = generic;
+                gc.value = m.get(generic);
+                list.add(gc);
+            }
+            return mapper.writeValueAsString(list);
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return "null";
+    }
+
     @GetMapping("/sectorcount")
     public String sectorCount() {
         try {
@@ -487,7 +559,15 @@ public class CustomResource {
      */
     @GetMapping("/clean")
     public String clean() {
-        return "clean";
+
+        for (Project p : projectRepository.findAll()) {
+            if (p.getProjectType() == null || p.getProjectType().equals("")) {
+                p.setProjectType(ProjectType.CCA);
+                projectRepository.save(p);
+            }
+        }
+
+        return "cleaned";
     }
 
 }

@@ -1,5 +1,5 @@
 # climatefinance
-This application was generated using JHipster 4.13.2, you can find documentation and help at [http://www.jhipster.tech/documentation-archive/v4.13.2](http://www.jhipster.tech/documentation-archive/v4.13.2).
+Project generated using Spring Boot, Angular 5, Liquibase, ElasticSearch and Hibernate.
 
 ## Development
 

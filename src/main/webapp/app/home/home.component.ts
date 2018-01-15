@@ -10,6 +10,7 @@ import {CountryCount} from "./countrycount";
 import {SectorCount} from "./sectorcount";
 
 import {Router} from "@angular/router";
+import {GenericCount} from "./genericcount";
 
 
 @Component({
@@ -26,10 +27,11 @@ export class HomeComponent implements OnInit {
     count: String;
     countryCounts: CountryCount[];
     sectorCount: SectorCount[];
+    sourceCount: GenericCount[];
 
 
-    //pie
-    view: any[] = [800, 500];
+    //pie chart
+    viewPie: any[] = [800, 500];
     showLegend = true;
     colorScheme = {
         domain: ['#5AA454', '#A10A28', '#C7B42C', '#AAAAAA']
@@ -37,6 +39,16 @@ export class HomeComponent implements OnInit {
     showLabels = true;
     explodeSlices = false;
     doughnut = false;
+
+    //bar chart
+    viewBar: any[] = [1400, 700];
+    showXAxis = true;
+    showYAxis = true;
+    gradient = false;
+    showXAxisLabel = true;
+    xAxisLabel = 'Country';
+    showYAxisLabel = true;
+    yAxisLabel = 'Population';
 
 
     constructor(
@@ -54,20 +66,26 @@ export class HomeComponent implements OnInit {
             this.account = account;
         });
         this.registerAuthenticationSuccess();
+
+        //stats
         this.getCount();
         this.getCountryCount();
         this.getSectorCount();
+        this.getSourceCount();
 
 
     }
 
-    onSelect(data) {
+    onSelectSector(data) {
         //alert(data.name);
-
         this.router.navigateByUrl("/project;search=sector.name:" + data.name)
-
-
     }
+
+    onSelectSource(data) {
+        //alert(data.name);
+        this.router.navigateByUrl("/project;search=principalSource:" + data.name)
+    }
+
 
     getCount(): void {
         this.homeService.getCount().then(count => this.count = count);
@@ -75,6 +93,10 @@ export class HomeComponent implements OnInit {
 
     getSectorCount(): void {
         this.homeService.getSectorCount().then(sectorCount => this.sectorCount = sectorCount);
+    }
+
+    getSourceCount(): void {
+        this.homeService.getSourceCount().then(sourceCount => this.sourceCount = sourceCount);
     }
 
     getCountryCount(): void {
@@ -85,8 +107,18 @@ export class HomeComponent implements OnInit {
         this.eventManager.subscribe('authenticationSuccess', (message) => {
             this.principal.identity().then((account) => {
                 this.account = account;
+
+                //stats
+                this.getCount();
+                this.getCountryCount();
+                this.getSectorCount();
+                this.getSourceCount();
+
             });
         });
+
+
+
     }
 
     isAuthenticated() {
