@@ -6,6 +6,12 @@
             "relationshipName": "project",
             "otherEntityName": "project",
             "otherEntityRelationshipName": "country"
+        },
+        {
+            "relationshipType": "one-to-many",
+            "relationshipName": "integration",
+            "otherEntityName": "integration",
+            "otherEntityRelationshipName": "country"
         }
     ],
     "fields": [

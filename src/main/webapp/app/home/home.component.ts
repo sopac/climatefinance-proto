@@ -11,6 +11,7 @@ import {SectorCount} from "./sectorcount";
 
 import {Router} from "@angular/router";
 import {GenericCount} from "./genericcount";
+import {Validcountry} from "./validcountry";
 
 
 @Component({
@@ -28,6 +29,9 @@ export class HomeComponent implements OnInit {
     countryCounts: CountryCount[];
     sectorCount: SectorCount[];
     sourceCount: GenericCount[];
+    validCountries: Validcountry[];
+
+
 
 
     //pie chart
@@ -72,6 +76,7 @@ export class HomeComponent implements OnInit {
         this.getCountryCount();
         this.getSectorCount();
         this.getSourceCount();
+        this.getValidCountries();
 
 
     }
@@ -95,12 +100,22 @@ export class HomeComponent implements OnInit {
         this.homeService.getSectorCount().then(sectorCount => this.sectorCount = sectorCount);
     }
 
+    getSectorCountByCountry(countryId): void {
+        //this.sectorCount = null;
+        this.homeService.getSectorCountByCountry(countryId).then(sectorCount => this.sectorCount = sectorCount);
+    }
+
     getSourceCount(): void {
+        //this.sectorCount = null;
         this.homeService.getSourceCount().then(sourceCount => this.sourceCount = sourceCount);
     }
 
     getCountryCount(): void {
         this.homeService.getCountryCount().then(countryCounts => this.countryCounts = countryCounts);
+    }
+
+    getValidCountries(): void {
+        this.homeService.getValidCountries().then(validCountries => this.validCountries = validCountries);
     }
 
     registerAuthenticationSuccess() {
@@ -113,6 +128,9 @@ export class HomeComponent implements OnInit {
                 this.getCountryCount();
                 this.getSectorCount();
                 this.getSourceCount();
+                this.getValidCountries();
+
+
 
             });
         });
@@ -121,8 +139,10 @@ export class HomeComponent implements OnInit {
 
     }
 
-    isAuthenticated() {
+    isAuthenticated():Boolean {
         return this.principal.isAuthenticated();
+        //if (this.principal.isAuthenticated()) return "yes";
+        //if (!this.principal.isAuthenticated()) return "no";
     }
 
     login() {

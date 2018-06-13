@@ -39,6 +39,11 @@ public class Country implements Serializable {
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<Project> projects = new HashSet<>();
 
+    @OneToMany(mappedBy = "country")
+    @JsonIgnore
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    private Set<Integration> integrations = new HashSet<>();
+
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
         return id;
@@ -97,6 +102,31 @@ public class Country implements Serializable {
 
     public void setProjects(Set<Project> projects) {
         this.projects = projects;
+    }
+
+    public Set<Integration> getIntegrations() {
+        return integrations;
+    }
+
+    public Country integrations(Set<Integration> integrations) {
+        this.integrations = integrations;
+        return this;
+    }
+
+    public Country addIntegration(Integration integration) {
+        this.integrations.add(integration);
+        integration.setCountry(this);
+        return this;
+    }
+
+    public Country removeIntegration(Integration integration) {
+        this.integrations.remove(integration);
+        integration.setCountry(null);
+        return this;
+    }
+
+    public void setIntegrations(Set<Integration> integrations) {
+        this.integrations = integrations;
     }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 

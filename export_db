@@ -1,0 +1,6 @@
+rm climatefinance.db
+sudo -u postgres psql -d climatefinance -c "VACUUM (FULL, ANALYSE)"
+sudo -u postgres pg_dump -Fc climatefinance > climatefinance.db
+#scp -C climatefinance.db services:/tmp/
+scp -C -i ~/Dropbox/gsd.pem climatefinance.db ubuntu@climatefinance:/tmp/
+#pg_restore -d dbname filename

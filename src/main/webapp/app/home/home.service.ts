@@ -10,6 +10,7 @@ import {Project} from "../entities/project/project.model";
 import {CountryCount} from "./countrycount";
 import {SectorCount} from "./sectorcount";
 import {GenericCount} from "./genericcount";
+import {Validcountry} from "./validcountry";
 
 @Injectable()
 export class HomeService {
@@ -33,8 +34,22 @@ export class HomeService {
             .catch(this.handleError);
     }
 
+    getValidCountries(): Promise<Validcountry[]> {
+        return this.http.get(this.restUrl + '/validcountries')
+            .toPromise()
+            .then(response => response.json() as Validcountry[])
+            .catch(this.handleError);
+    }
+
     getSectorCount(): Promise<SectorCount[]> {
         return this.http.get(this.restUrl + '/sectorcount')
+            .toPromise()
+            .then(response => response.json() as SectorCount[])
+            .catch(this.handleError);
+    }
+
+    getSectorCountByCountry(countryId): Promise<SectorCount[]> {
+        return this.http.get(this.restUrl + '/sectorcountbycountry?countryId=' + countryId)
             .toPromise()
             .then(response => response.json() as SectorCount[])
             .catch(this.handleError);

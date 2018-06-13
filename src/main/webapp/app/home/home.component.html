@@ -12,7 +12,13 @@
             Project</p>
         <hr/>
 
+
+      <!--  {{isAuthenticated()}}-->
+
         <div [ngSwitch]="isAuthenticated()">
+
+
+
             <div *ngSwitchCase="true">
 
                 <span *ngIf="account" class="alert alert-success">You are logged in as <b>{{account.firstName}} {{account.lastName}}</b>.</span>
@@ -27,8 +33,7 @@
                     </tr>
 
                     <tr *ngFor="let cc of countryCounts">
-                        <td><a style="color: #2b6ea1; font-weight: lighter;"
-                               href="#/project;search=country.name:{{cc.country}}">{{cc.country}}</a></td>
+                        <td><a style="color: #2b6ea1; font-weight: lighter;" href="#/project;search=country.name:{{cc.country.replace('Islands', '').trim()}}">{{cc.country}}</a></td>
                         <td>{{cc.count}}</td>
                     </tr>
 
@@ -40,9 +45,24 @@
 
                 <br/>
 
+
+
+
+
                 <p style="margin-left: 50px; font-weight: bold;">Projects Per Sector</p>
 
-                <ngx-charts-pie-chart
+                <ul style="margin-left: 20px;list-style-type: none; display: inline;" *ngFor="let vc of validCountries">
+                    <li style="list-style-type: none; display: inline; ">
+                        <a style="font-weight: lighter; color: #0f6ab4;" (click)="getSectorCountByCountry(vc.id)">{{vc.country}}</a>
+                    </li>
+                </ul>
+                <a style="font-weight: lighter; color: #0f6ab4; margin-left: 30px;" (click)="getSectorCount()"> |  ALL</a>
+
+
+
+
+
+                <ngx-charts-pie-chart *ngIf="sectorCount"
                     [view]="viewPie"
                     [scheme]="colorScheme"
                     [results]="sectorCount"
@@ -62,7 +82,7 @@
 
                     <p style="margin-left: 200px; font-weight: bold;">Projects Per Principal Source</p>
 
-                    <ngx-charts-bar-horizontal
+                    <ngx-charts-bar-horizontal *ngIf="sourceCount"
                         [view]="viewBar"
                         [scheme]="colorScheme"
                         [results]="sourceCount"
@@ -82,7 +102,7 @@
             </div>
 
 
-            <div *ngSwitchCase="false">
+            <div *ngSwitchCase="!true">
                 <p style="text-align: justify">
                     Climate change funding to support developing countries tackle climate change has increased over the
                     past years and is projected to increase dramatically in the future. At the national level, tracking
@@ -108,6 +128,7 @@
                     Further information is available at <a href="http://ccprojects.gsd.spc.int/isacc">ccprojects.gsd.spc.int</a>.
                 </p>
             </div>
+
 
         </div>
 

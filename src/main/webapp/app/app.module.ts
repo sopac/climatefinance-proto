@@ -2,7 +2,7 @@ import './vendor.ts';
 
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-//import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
+import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import { Ng2Webstorage } from 'ngx-webstorage';
 
 import { ClimatefinanceSharedModule, UserRouteAccessService } from './shared';
@@ -29,7 +29,7 @@ import {
 @NgModule({
     imports: [
         BrowserModule,
-        //BrowserAnimationsModule,
+        BrowserAnimationsModule,
         ClimatefinanceAppRoutingModule,
         Ng2Webstorage.forRoot({ prefix: 'jhi', separator: '-'}),
         ClimatefinanceSharedModule,

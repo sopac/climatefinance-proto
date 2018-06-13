@@ -175,6 +175,74 @@ public class CustomResource {
         return "null";
     }
 
+    @GetMapping("/validcountries")
+    public String getValidCountries() {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            Map<Long, String> countries = new HashMap<>();
+            for (Project p : projectRepository.findAll()) {
+                if (!countries.containsKey(p.getCountry().getId())) {
+                    countries.put(p.getCountry().getId(), p.getCountry().getName());
+                }
+            }
+
+            ArrayList<ValidCountry> validCountries = new ArrayList<>();
+            countries.forEach((id, c)->{
+                ValidCountry vc = new ValidCountry();
+                vc.id = id;
+                vc.country = c;
+                validCountries.add(vc);
+
+            });
+
+            return mapper.writeValueAsString(validCountries);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return "null";
+    }
+
+    @GetMapping("/sectorcountbycountry")
+    public String sectorCountByCountry(long countryId) {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            ArrayList<SectorCount> list = new ArrayList<>();
+
+            Set<String> sectorSet = new HashSet();
+            for (Project p : projectRepository.findAll()) {
+                if (p.getCountry().getId() == countryId) {
+                    if (p.getSector() != null) sectorSet.add(p.getSector().getName());
+                }
+            }
+
+            Map<String, Integer> m = new HashMap<>();
+            for (String c : sectorSet) {
+                m.put(c, 0);
+            }
+
+            for (Project p : projectRepository.findAll()) {
+                if (p.getCountry().getId() == countryId) {
+                    if (p.getSector() != null) {
+                        String c = p.getSector().getName();
+                        m.compute(c, (k, v) -> v + 1);
+                    }
+                }
+            }
+
+            for (String sector : m.keySet()) {
+                SectorCount sc = new SectorCount();
+                sc.name = sector;
+                sc.value = m.get(sector);
+                list.add(sc);
+            }
+            return mapper.writeValueAsString(list);
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return "null";
+    }
+
 
     @GetMapping("/countrycount")
     public String countryCount() {
@@ -240,7 +308,7 @@ public class CustomResource {
         countries.put("WS", "Samoa");
         countries.put("MH", "Marshall Islands");
 
-        String[] sectors = {"Agriculture", "Community", "Disaster RIsk", "Education", "Energy", "Environment", "Forestry", "Governance", "Health", "ICT", "Infrastructure", "Social", "Transport", "Tourism", "Utility", "Other"};
+        String[] sectors = {"Agriculture", "Community", "Disaster Risk", "Education", "Energy", "Environment", "Forestry", "Governance", "Health", "ICT", "Infrastructure", "Social", "Transport", "Tourism", "Utility", "Other"};
 
         String[] detailedSectors = {"Conservation Biodiversity", "Disaster Risk Reduction", "Disaster Risk Mitigation", "Enabling Environment", "Renewable Energy", "Food Security", "ICT", "Livelihood Options", "Oceans and Marine", "Transport", "Waste Management", "Water and Sanitation", "Other"};
 
@@ -277,9 +345,9 @@ public class CustomResource {
             InputStream is = null;
             String path = "/home/sachin/_email/ClimateFinance/";
 
-            //palau
+            //solomons
             try {
-                is = new FileInputStream(new File(path + "pl.xlsx"));
+                is = new FileInputStream(new File(path + "sb.xlsx"));
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
@@ -287,6 +355,162 @@ public class CustomResource {
             Workbook workbook = StreamingReader.builder().rowCacheSize(100).bufferSize(4096).open(is);
             Sheet sheet = workbook.getSheetAt(0);
             int r_index = 0;
+            for (Row r : sheet) {
+                if (r_index != 0) {
+                    int c_index = 0;
+                    Project p = new Project();
+                    p.setCountry(countryRepository.findAll().get(3));
+                    p.setActive(true);
+
+                    for (Cell c : r) {
+                        if (c_index == 0) p.setProjectTitle(c.getStringCellValue());
+                        if (c_index == 1) p.setProjectDescription(c.getStringCellValue());
+                        if (p.getProjectDescription() == null || p.getProjectDescription().equals(""))
+                            p.setProjectDescription(p.getProjectTitle());
+
+                        if (c_index == 2) p.setWeightingPercentage(c.getStringCellValue());
+
+                        if (c_index == 5) {
+                            String st = c.getStringCellValue().toLowerCase();
+                            for (Sector s : sectorRepository.findAll()) {
+                                if (st.contains(s.getName().toLowerCase())) p.setSector(s);
+                            }
+                        }
+
+                        c_index++;
+                    }
+                    if (p.getProjectTitle() != null) {
+                        if (!p.getProjectTitle().equals("")) projectRepository.save(p);
+                    }
+                }
+                r_index++;
+            }
+
+            //tonga
+            try {
+                is = new FileInputStream(new File(path + "to.xlsx"));
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+
+            workbook = StreamingReader.builder().rowCacheSize(100).bufferSize(4096).open(is);
+            sheet = workbook.getSheetAt(0);
+            r_index = 0;
+            for (Row r : sheet) {
+                if (r_index != 0) {
+                    int c_index = 0;
+                    Project p = new Project();
+                    p.setCountry(countryRepository.findAll().get(4));
+                    p.setActive(true);
+
+                    for (Cell c : r) {
+                        if (c_index == 1) p.setProjectTitle(c.getStringCellValue());
+                        if (p.getProjectDescription() == null || p.getProjectDescription().equals(""))
+                            p.setProjectDescription(p.getProjectTitle());
+
+                        if (c_index == 3) p.setPrincipalSource(c.getStringCellValue());
+                        p.setWeightingPercentage("0.8");
+                        p.setFundingBasis(FundingBasis.NATIONAL);
+
+                        if (c_index == 4) p.setAdditionalSource(c.getStringCellValue());
+
+                        if (c_index == 0) p.setMinistry(c.getStringCellValue().toUpperCase());
+
+                        if (c_index == 5) {
+                            p.setProjectType(ProjectType.CCA);
+                            if (c.getStringCellValue().equals("CCM")) p.setProjectType(ProjectType.CCM);
+                            if (c.getStringCellValue().equals("DRR")) p.setProjectType(ProjectType.DRR);
+                            if (c.getStringCellValue().equals("DRM")) p.setProjectType(ProjectType.DRM);
+                            if (c.getStringCellValue().toLowerCase().equals("enabling"))
+                                p.setProjectType(ProjectType.ENABLING);
+                        }
+
+                        if (c_index == 7) {
+                            String amt = c.getStringCellValue().trim();
+                            if (amt.equals("-")) amt = "0";
+                            if (amt.equals("")) amt = "0";
+                            if (amt.startsWith("-")) amt = "0";
+                            amt = amt.replaceAll(",", "").trim();
+                            p.setTotalFundingAmount(Double.valueOf(amt));
+                            p.setTotalFundingCurrency(Currency.USD);
+                        }
+
+                        if (c_index == 6) {
+                            String st = c.getStringCellValue().toLowerCase();
+                            for (Sector s : sectorRepository.findAll()) {
+                                if (st.contains(s.getName().toLowerCase())) p.setSector(s);
+                            }
+                        }
+
+                        c_index++;
+                    }
+                    if (p.getProjectTitle() != null) {
+                        if (!p.getProjectTitle().equals("")) projectRepository.save(p);
+                    }
+                }
+                r_index++;
+            }
+
+
+            //rmi
+            try {
+                is = new FileInputStream(new File(path + "rmi.xlsx"));
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+
+            workbook = StreamingReader.builder().rowCacheSize(100).bufferSize(4096).open(is);
+            sheet = workbook.getSheetAt(0);
+            r_index = 0;
+            for (Row r : sheet) {
+                if (r_index != 0) {
+                    int c_index = 0;
+                    Project p = new Project();
+                    p.setCountry(countryRepository.findAll().get(1));
+                    p.setActive(true);
+
+                    for (Cell c : r) {
+                        if (c_index == 0) p.setProjectTitle(c.getStringCellValue());
+                        if (c_index == 1) p.setProjectDescription(c.getStringCellValue());
+                        if (p.getProjectDescription() == null || p.getProjectDescription().equals(""))
+                            p.setProjectDescription(p.getProjectTitle());
+
+                        if (c_index == 7) p.setPrincipalSource(c.getStringCellValue());
+
+                        if (c_index == 12) {
+                            String st = c.getStringCellValue().toLowerCase();
+                            for (Sector s : sectorRepository.findAll()) {
+                                if (st.contains(s.getName().toLowerCase())) p.setSector(s);
+                            }
+                        }
+
+                        if (c_index == 13) {
+                            String st = c.getStringCellValue().toLowerCase();
+                            for (DetailedSector s : detailedSectorRepository.findAll()) {
+                                if (st.contains(s.getName().toLowerCase())) p.setDetailedSector(s);
+                            }
+                        }
+
+                        c_index++;
+                    }
+                    if (p.getProjectTitle() != null) {
+                        if (!p.getProjectTitle().equals("")) projectRepository.save(p);
+                    }
+                }
+                r_index++;
+            }
+
+
+            //palau
+            try {
+                is = new FileInputStream(new File(path + "pl.xlsx"));
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+
+            workbook = StreamingReader.builder().rowCacheSize(100).bufferSize(4096).open(is);
+            sheet = workbook.getSheetAt(0);
+            r_index = 0;
             for (Row r : sheet) {
                 if (r_index != 0) {
                     int c_index = 0;

@@ -4,6 +4,7 @@ import { ClimatefinanceProjectModule } from './project/project.module';
 import { ClimatefinanceSectorModule } from './sector/sector.module';
 import { ClimatefinanceDetailedSectorModule } from './detailed-sector/detailed-sector.module';
 import { ClimatefinanceCountryModule } from './country/country.module';
+import { ClimatefinanceIntegrationModule } from './integration/integration.module';
 /* jhipster-needle-add-entity-module-import - JHipster will add entity modules imports here */
 
 @NgModule({
@@ -12,6 +13,7 @@ import { ClimatefinanceCountryModule } from './country/country.module';
         ClimatefinanceSectorModule,
         ClimatefinanceDetailedSectorModule,
         ClimatefinanceCountryModule,
+        ClimatefinanceIntegrationModule,
         /* jhipster-needle-add-entity-module - JHipster will add entity modules here */
     ],
     declarations: [],

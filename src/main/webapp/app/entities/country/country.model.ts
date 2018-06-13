@@ -6,6 +6,7 @@ export class Country implements BaseEntity {
         public name?: string,
         public code?: string,
         public projects?: BaseEntity[],
+        public integrations?: BaseEntity[],
     ) {
     }
 }
